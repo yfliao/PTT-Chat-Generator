@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import logging
 import os
@@ -5,13 +7,13 @@ import os
 def main():
 
     Filter = ArticleFilter()
-    Filter.load_processed_corpus()
-    #Filter.process_raw_data("data/raw/",is_dir=True,to_one_file=True,one_file_name="CorpusPatch2.json")
-    #Filter.merge_coprus()
+#    Filter.load_processed_corpus()
+    Filter.process_raw_data("data/raw/",is_dir=True,to_one_file=True,one_file_name="CorpusPatch2.json")
+    Filter.merge_coprus()
 
     Filter.print_titles()
     Filter.print_response()
-    # Filter.print_user_info() TODO?
+    Filter.print_user_info() # TODO?
 
 class ArticleFilter(object):
 
@@ -59,6 +61,7 @@ class ArticleFilter(object):
         for filename in filenames:
 
             count +=1
+#            print(filename)
             if count % 100 == 0:
                 logging.info("已處理 %d 頁文章, 其中有效文章數為 %d" % (count, self.article_count))
 
@@ -276,6 +279,11 @@ class ArticleFilter(object):
                     tr.write(json.dumps(resSplit, indent=4, ensure_ascii=False))
                     resSplit = []
                 logging.info("已輸出 %d 篇回應" % sc)
+        if sc % 1000 > 0:
+            with open('data/processed/reply/'+str(int(sc/1000) - 1 + 1)+'.json','w',encoding='utf-8') as tr:
+                tr.write(json.dumps(resSplit, indent=4, ensure_ascii=False))
+                resSplit = []
+            logging.info("已輸出 %d 篇回應" % sc)
         logging.info("回應輸出完成")
 
 if __name__ == '__main__':
