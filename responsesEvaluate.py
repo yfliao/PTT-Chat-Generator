@@ -86,7 +86,7 @@ class Evaluator(Matcher):
                                and keyword != ' ']
             self.totalWords += len(keywordResponse)
             self.segResponses.append(keywordResponse)
-        #logging.info("已完成回應斷詞")
+#        logging.info("已完成回應斷詞")
 
     def buildCounterDictionary(self):
         """
@@ -95,14 +95,14 @@ class Evaluator(Matcher):
         for reply in self.segResponses:
             for word in reply:
                 self.counterDictionary[word] += 1
-        #logging.info("計數字典建置完成")
+#        logging.info("計數字典建置完成")
 
     def buildTokenDictionary(self):
         """
         為 self.segResponses 中的詞配置一個 id
         """
         self.tokenDictionary = corpora.Dictionary(self.segResponses)
-        logging.info("詞袋字典建置完成，%s" % str(self.tokenDictionary))
+#        logging.info("詞袋字典建置完成，%s" % str(self.tokenDictionary))
 
     def evaluateByGrade(self,topk,debug=False):
         """
@@ -137,8 +137,9 @@ class Evaluator(Matcher):
                 if wordWeight > 1:
                     meanful += math.log(wordWeight,10)
                 cur_grade += wordWeight
-
-            cur_grade = cur_grade * meanful / (math.log(len(self.segResponses[i])+1,avgWords) + 1)
+            
+#            print(float(len(self.segResponses[i])),float(avgWords))
+            cur_grade = cur_grade * meanful / ( math.log( len(self.segResponses[i])+1.0,avgWords+0.0000000001 ) + 1.0)
             candiates.append([self.responses[i],cur_grade])
 
             if debug:
