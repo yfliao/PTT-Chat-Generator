@@ -10,7 +10,8 @@ from Matcher.bm25Matcher import bestMatchingMatcher
 from Matcher.matcher import Matcher
 
 def main():
-    matcherTesting("bm25",removeStopWords=False)
+#    matcherTesting("bm25",removeStopWords=False)
+    corpusGenerator("bm25",removeStopWords=False)
 
 def getMatcher(matcherType,removeStopWords=False):
 
@@ -57,6 +58,37 @@ def matcherTesting(matcherType,removeStopWords=False):
         print("以下是相似度前 5 高的回應")
         for candiate in candiates:
             print("%s %f" % (candiate[0],candiate[1]))
+
+def corpusGenerator(matcherType,removeStopWords=False):
+
+    matcher = getMatcher(matcherType,removeStopWords)
+
+    index=0
+    with open("data/Titles.txt",'r',encoding='utf-8') as data:
+        for line in data:
+#        query = input("隨便說些什麼吧: ")
+            query = line.strip('\n') 
+#            title,index = matcher.match(query)
+#            sim = matcher.getSimilarity()
+#            print("最為相似的標題是 %s ，相似度為 %d " % (title,sim))
+
+            res = json.load(open(os.path.join("data/processed/reply/",str(int(index/1000))+'.json'),'r',encoding='utf-8'))
+            targetId = index % 1000
+            #randomId = random.randrange(0,len(res[targetId]))
+
+            evaluator = Evaluator()
+            candiates = evaluator.getBestResponse(responses=res[targetId],topk=100000,debugMode=False)
+#            print("以下是相似度前 5 高的回應")
+#            for candiate in candiates:
+#                print("### %s\t%s %f" % (query, candiate[0],candiate[1]))
+#            print("### index= ### %d" % (index))
+            if len(candiates):
+                for candiate in candiates:
+                    print("%s\n%s\n===" % (query, candiate[0]))
+            else:
+                print("%s\n%s\n===" % (query, "找不到資料"))
+            
+            index += 1
 
 def woreWeightMatch():
 
